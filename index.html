@@ -4,7 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Controle de Manutenções - Seja Fibra</title>
+    <!-- Favicon -->
+    <link rel="icon" href="https://raw.githubusercontent.com/fabricioubatuba/manutencoes/refs/heads/main/faviconsf.ico" type="image/x-icon">
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         body { padding: 20px; background-color: #f8f9fa; }
@@ -20,8 +24,6 @@
         #loginForm { max-width: 400px; margin: 50px auto; }
         .logo { max-height: 60px; margin-bottom: 20px; }
         .user-info { margin-left: 15px; font-size: 0.9rem; color: #6c757d; }
-        .form-check-label { user-select: none; }
-        .discount-result { background-color: #e9ecef; padding: 15px; border-radius: 5px; margin-top: 20px; }
     </style>
 </head>
 <body>
@@ -133,9 +135,9 @@
                 <div>
                     <i class="fas fa-list"></i> Últimas Manutenções Cadastradas
                 </div>
-                <button class="btn btn-sm btn-info" id="calculateDiscountsBtn">
-                    <i class="fas fa-calculator"></i> Calcular Descontos
-                </button>
+                <a href="https://fabricioubatuba.github.io/descontos/" class="btn btn-sm btn-info" target="_blank">
+                    <i class="fas fa-external-link-alt"></i> Calcular Descontos
+                </a>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -162,38 +164,6 @@
                 </div>
             </div>
         </div>
-
-        <div class="card mt-4" id="discountResultsCard" style="display: none;">
-            <div class="card-header">
-                <i class="fas fa-percentage"></i> Resultado de Descontos
-            </div>
-            <div class="card-body">
-                <div class="row mb-3">
-                    <div class="col-md-4">
-                        <label for="discountCity" class="form-label">Cidade</label>
-                        <select class="form-select" id="discountCity" required>
-                            <option value="">Selecione uma cidade</option>
-                            <option value="Ubatuba">Ubatuba</option>
-                            <option value="Caraguatatuba">Caraguatatuba</option>
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="discountNeighborhood" class="form-label">Bairro</label>
-                        <select class="form-select" id="discountNeighborhood" required>
-                            <option value="">Selecione um bairro</option>
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="discountDate" class="form-label">Data de Referência</label>
-                        <input type="date" class="form-control" id="discountDate" required>
-                    </div>
-                </div>
-                <button id="calculateForAddressBtn" class="btn btn-primary">
-                    <i class="fas fa-calculator"></i> Calcular para Este Endereço
-                </button>
-                <div id="discountResult" class="discount-result mt-3" style="display: none;"></div>
-            </div>
-        </div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
@@ -217,8 +187,8 @@
         const auth = firebase.auth();
 
         const neighborhoods = {
-            'Ubatuba': ['Acaraú', 'Barra da Lagoa', 'Barra-Seca', 'Caçandoca', 'Centro', 'Emaús', 'Enseada', 'Estufa 1', 'Estufa 2', 'Ipiranguinha', 'Itaguá', 'Itamambuca', 'Jardim Carolina', 'Lagoinha', 'Lázaro', 'Marafunda', 'Maranduba', 'Parque Dos Ministérios', 'Parque Guarani', 'Parque Vivamar', 'Pedra Verde', 'Pedreira', 'Perequê-Açú', 'Pereque-Mirim', 'Praia Do Pulso', 'Praia Dura', 'Praia Grande', 'Rio Escuro', 'Santa Rita', 'Sapé', 'Sertão Da Quina', 'Silop', 'Sumaré', 'Sumidouro', 'Taquaral', 'Taquaral (Angelim)', 'Taquaral (Vila Resende)', 'Tenório', 'Toninhas', 'Umuarama', 'Vale Do Sol', 'Vila Sumaré'],
-            'Caraguatatuba': ['Alamedas dos Pessegueiros', 'Alamedas das Amendoeiras', 'Alamedas das Cerejeiras', 'Alamedas Das Figueiras', 'Alamedas Dos Castanheiros', 'Araguais', 'Barranco Alto', 'Caputera', 'Casa Branca', 'Centro', 'Cidade Jardim', 'Cond Res Vilaggio Portofino', 'Cond. Beira Mar (Martim De Sá)', 'Cond. Gaivotas', 'Costa Nova', 'Costa Verde', 'Getuba', 'Golfinhos', 'Golfinhos', 'Ilhas Canárias', 'Jaraguazinho', 'Jardim Capricornio', 'Jardim Gaivotas', 'Jardim Primavera', 'Jardim Santa Rosa (Chocolate)', 'Jardim Terralão', 'Martim De Sá', 'Massaguaçu', 'Morro Do Algodão', 'Olaria', 'Osvaldo Cruz', 'Parque Imperial', 'Pereque', 'Poiares', 'Ponte Seca', 'Portal Fazendinha', 'Portal Patrimonio', 'Praia Da Mococa', 'Prainha', 'Rio Do Ouro', 'Santos Dumont', 'Sumaré', 'Tabatinga', 'Terralão', 'Tocantins', 'Travessão', 'Loteamento Morada Do Mar', 'Indaiá', 'Jardim California', 'Jardim Jaqueira', 'Tinga']
+            'Ubatuba': ['Acaraú', 'Barra da Lagoa', 'Barra-Seca', 'Caçandoca', 'Centro', 'Emaús', 'Enseada', 'Estufa 1', 'Estufa 2', 'Ipiranguinha', 'Itaguá', 'Itamambuca', 'Jardim Carolina', 'Lagoinha', 'Lázaro', 'Marafunda', 'Maranduba', 'Parque Dos Ministérios', 'Parque Guarani', 'Parque Vivamar', 'Pedra Verde', 'Pedreira', 'Perequê-Açú', 'Pereque-Mirim', 'Praia Do Pulso', 'Praia Dura', 'Praia Grande', 'Rio Escuro', 'Santa Rita', 'Sapé', 'Sertão Da Quina', 'Silop', 'Sumaré', 'Sumidouro', 'Taquaral', 'Taquaral (Angelim)', 'Taquaral (Vila Resende)', 'Tenório', 'Toninhas', 'Ubatuba', 'Umuarama', 'Vale Do Sol', 'Vila Sumaré'],
+            'Caraguatatuba': ['Alamedas dos Pessegueiros', 'Alamedas das Amendoeiras', 'Alamedas das Cerejeiras', 'Alamedas Das Figueiras', 'Alamedas Dos Castanheiros', 'Araguais', 'Barranco Alto', 'Caputera', 'Caraguá', 'Casa Branca', 'Centro', 'Cidade Jardim', 'Cond Res Vilaggio Portofino', 'Cond. Beira Mar (Martim De Sá)', 'Cond. Gaivotas', 'Costa Nova', 'Costa Verde', 'Getuba', 'Golfinhos', 'Golfinhos', 'Ilhas Canárias', 'Jaraguazinho', 'Jardim Capricornio', 'Jardim Gaivotas', 'Jardim Primavera', 'Jardim Santa Rosa (Chocolate)', 'Jardim Terralão', 'Martim De Sá', 'Massaguaçu', 'Morro Do Algodão', 'Olaria', 'Osvaldo Cruz', 'Parque Imperial', 'Pereque', 'Poiares', 'Ponte Seca', 'Portal Fazendinha', 'Portal Patrimonio', 'Praia Da Mococa', 'Prainha', 'Rio Do Ouro', 'Santos Dumont', 'Sumaré', 'Tabatinga', 'Terralão', 'Tocantins', 'Travessão', 'Loteamento Morada Do Mar', 'Indaiá', 'Jardim California', 'Jardim Jaqueira', 'Tinga']
         };
 
         // Referências do DOM
@@ -242,13 +212,6 @@
         const saveBtn = document.getElementById('saveBtn');
         const cancelBtn = document.getElementById('cancelBtn');
         const maintenanceIdInput = document.getElementById('maintenanceId');
-        const calculateDiscountsBtn = document.getElementById('calculateDiscountsBtn');
-        const discountResultsCard = document.getElementById('discountResultsCard');
-        const discountCity = document.getElementById('discountCity');
-        const discountNeighborhood = document.getElementById('discountNeighborhood');
-        const discountDate = document.getElementById('discountDate');
-        const calculateForAddressBtn = document.getElementById('calculateForAddressBtn');
-        const discountResult = document.getElementById('discountResult');
 
         // Estado da aplicação
         let editingId = null;
@@ -267,10 +230,6 @@
                 updateNeighborhoods();
             });
 
-            discountCity.addEventListener('change', function() {
-                updateDiscountNeighborhoods();
-            });
-
             maintenanceForm.addEventListener('submit', function(e) {
                 e.preventDefault();
                 saveMaintenance();
@@ -278,15 +237,6 @@
 
             cancelBtn.addEventListener('click', function() {
                 cancelEdit();
-            });
-
-            calculateDiscountsBtn.addEventListener('click', function() {
-                discountResultsCard.style.display = 'block';
-                discountDate.valueAsDate = new Date();
-            });
-
-            calculateForAddressBtn.addEventListener('click', function() {
-                calculateDiscountForAddress();
             });
         }
 
@@ -374,20 +324,6 @@
             }
         }
 
-        function updateDiscountNeighborhoods() {
-            const city = discountCity.value;
-            discountNeighborhood.innerHTML = '<option value="">Selecione um bairro</option>';
-            
-            if (city) {
-                neighborhoods[city].forEach(neighborhood => {
-                    const option = document.createElement('option');
-                    option.value = neighborhood;
-                    option.textContent = neighborhood;
-                    discountNeighborhood.appendChild(option);
-                });
-            }
-        }
-
         function setCurrentDateTime() {
             const now = new Date();
             const timezoneOffset = now.getTimezoneOffset() * 60000;
@@ -422,7 +358,7 @@
             const maintenanceData = {
                 city,
                 neighborhood,
-                affectedArea, // Campo adicional para exibição
+                affectedArea,
                 problemType,
                 responsible,
                 startDate,
@@ -430,7 +366,7 @@
                 protocol,
                 updatedAt: firebase.database.ServerValue.TIMESTAMP,
                 updatedBy: currentUser.email,
-                isCityWide: neighborhood === "TODA_CIDADE" // Flag para manutenção em toda cidade
+                isCityWide: neighborhood === "TODA_CIDADE"
             };
 
             const updates = {};
@@ -448,73 +384,72 @@
         }
 
         function loadMaintenances() {
-    // MODIFICADO: Ordena por startDate e limita a 20 registros
-    database.ref('maintenances').orderByChild('startDate').limitToLast(20).on('value', snapshot => {
-        maintenanceTable.innerHTML = '';
-        allMaintenances = [];
-        
-        if (!snapshot.exists()) {
-            maintenanceTable.innerHTML = '<tr><td colspan="9" class="text-center">Nenhuma manutenção cadastrada</td></tr>';
-            return;
+            database.ref('maintenances').orderByChild('startDate').limitToLast(20).on('value', snapshot => {
+                maintenanceTable.innerHTML = '';
+                allMaintenances = [];
+                
+                if (!snapshot.exists()) {
+                    maintenanceTable.innerHTML = '<tr><td colspan="9" class="text-center">Nenhuma manutenção cadastrada</td></tr>';
+                    return;
+                }
+
+                snapshot.forEach(childSnapshot => {
+                    const maintenance = {
+                        id: childSnapshot.key,
+                        ...childSnapshot.val()
+                    };
+                    allMaintenances.push(maintenance);
+                });
+
+                // Ordena por data de abertura (mais recente primeiro)
+                allMaintenances.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
+
+                allMaintenances.forEach(maintenance => {
+                    const row = document.createElement('tr');
+                    
+                    const startDate = formatDateTime(maintenance.startDate);
+                    const endDate = maintenance.endDate ? formatDateTime(maintenance.endDate) : '-';
+                    
+                    const status = maintenance.endDate ? 
+                        '<span class="status-badge status-completed">Concluído</span>' : 
+                        '<span class="status-badge status-active">Em Andamento</span>';
+
+                    row.innerHTML = `
+                        <td>${maintenance.protocol || 'N/A'}</td>
+                        <td>${maintenance.city}</td>
+                        <td>${maintenance.affectedArea || maintenance.neighborhood}</td>
+                        <td>${maintenance.problemType}</td>
+                        <td>${maintenance.responsible}</td>
+                        <td>${startDate}</td>
+                        <td>${endDate}</td>
+                        <td>${status}</td>
+                        <td>
+                            <button class="btn btn-sm btn-warning btn-action edit-btn" data-id="${maintenance.id}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger btn-action delete-btn" data-id="${maintenance.id}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    `;
+                    
+                    maintenanceTable.appendChild(row);
+                });
+
+                // Adiciona eventos aos botões
+                document.querySelectorAll('.edit-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        editMaintenance(this.getAttribute('data-id'));
+                    });
+                });
+
+                document.querySelectorAll('.delete-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        deleteMaintenance(this.getAttribute('data-id'));
+                    });
+                });
+            });
         }
-
-        snapshot.forEach(childSnapshot => {
-            const maintenance = {
-                id: childSnapshot.key,
-                ...childSnapshot.val()
-            };
-            allMaintenances.push(maintenance);
-        });
-
-        // MODIFICADO: Ordena por data de abertura (mais recente primeiro)
-        allMaintenances.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
-
-        allMaintenances.forEach(maintenance => {
-            const row = document.createElement('tr');
-            
-            const startDate = formatDateTime(maintenance.startDate);
-            const endDate = maintenance.endDate ? formatDateTime(maintenance.endDate) : '-';
-            
-            const status = maintenance.endDate ? 
-                '<span class="status-badge status-completed">Concluído</span>' : 
-                '<span class="status-badge status-active">Em Andamento</span>';
-
-            row.innerHTML = `
-                <td>${maintenance.protocol || 'N/A'}</td>
-                <td>${maintenance.city}</td>
-                <td>${maintenance.affectedArea || maintenance.neighborhood}</td>
-                <td>${maintenance.problemType}</td>
-                <td>${maintenance.responsible}</td>
-                <td>${startDate}</td>
-                <td>${endDate}</td>
-                <td>${status}</td>
-                <td>
-                    <button class="btn btn-sm btn-warning btn-action edit-btn" data-id="${maintenance.id}">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="btn btn-sm btn-danger btn-action delete-btn" data-id="${maintenance.id}">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </td>
-            `;
-            
-            maintenanceTable.appendChild(row);
-        });
-
-        // Adiciona eventos aos botões (mantido igual)
-        document.querySelectorAll('.edit-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                editMaintenance(this.getAttribute('data-id'));
-            });
-        });
-
-        document.querySelectorAll('.delete-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                deleteMaintenance(this.getAttribute('data-id'));
-            });
-        });
-    });
-}
 
         function editMaintenance(id) {
             database.ref('maintenances/' + id).once('value')
@@ -584,152 +519,6 @@
                 hour: '2-digit',
                 minute: '2-digit'
             });
-        }
-
-        function calculateDiscountForAddress() {
-            const city = discountCity.value;
-            const neighborhood = discountNeighborhood.value;
-            const referenceDate = discountDate.value;
-            
-            if (!city || !neighborhood || !referenceDate) {
-                alert('Preencha todos os campos para calcular o desconto!');
-                return;
-            }
-            
-            const refDate = new Date(referenceDate);
-            refDate.setHours(0, 0, 0, 0);
-            
-            // Filtra manutenções relevantes
-            const relevantMaintenances = allMaintenances.filter(maint => {
-                // Verifica se é para a mesma cidade
-                if (maint.city !== city) return false;
-                
-                // Verifica se a manutenção é para este bairro específico OU para toda a cidade
-                if (maint.neighborhood !== neighborhood && maint.neighborhood !== "TODA_CIDADE") return false;
-                
-                // Verifica se a manutenção está dentro do período de referência
-                const startDate = new Date(maint.startDate);
-                const endDate = maint.endDate ? new Date(maint.endDate) : new Date();
-                
-                startDate.setHours(0, 0, 0, 0);
-                endDate.setHours(0, 0, 0, 0);
-                
-                return startDate <= refDate && endDate >= refDate;
-            });
-            
-            // Ordena por data de início (mais antiga primeiro)
-            relevantMaintenances.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
-            
-            // Agrupa por dia de problema
-            const daysWithProblems = {};
-            
-            relevantMaintenances.forEach(maint => {
-                const startDate = new Date(maint.startDate);
-                const endDate = maint.endDate ? new Date(maint.endDate) : new Date();
-                
-                // Para cada dia no intervalo da manutenção
-                for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
-                    const dayKey = d.toISOString().split('T')[0];
-                    
-                    // Se já tiver um problema registrado para este dia, não sobrescreve (mantém o mais antigo)
-                    if (!daysWithProblems[dayKey]) {
-                        daysWithProblems[dayKey] = {
-                            date: new Date(d),
-                            isCityWide: maint.isCityWide,
-                            protocol: maint.protocol
-                        };
-                    }
-                }
-            });
-            
-            // Filtra apenas os dias que estão no mês/ano de referência
-            const refMonth = refDate.getMonth();
-            const refYear = refDate.getFullYear();
-            
-            const filteredDays = Object.values(daysWithProblems).filter(day => {
-                return day.date.getMonth() === refMonth && day.date.getFullYear() === refYear;
-            });
-            
-            // Separa problemas de bairro específico vs cidade inteira
-            const neighborhoodProblems = filteredDays.filter(day => !day.isCityWide);
-            const cityWideProblems = filteredDays.filter(day => day.isCityWide);
-            
-            // Calcula descontos
-            const dailyDiscount = 3.33; // Valor diário do desconto (R$)
-            
-            let totalDiscount = 0;
-            let discountDetails = [];
-            
-            // Primeiro aplica descontos de bairro específico
-            neighborhoodProblems.forEach(day => {
-                totalDiscount += dailyDiscount;
-                discountDetails.push({
-                    date: day.date,
-                    amount: dailyDiscount,
-                    type: 'Bairro',
-                    protocol: day.protocol
-                });
-            });
-            
-            // Depois aplica descontos de cidade inteira, exceto dias já cobertos por descontos de bairro
-            cityWideProblems.forEach(day => {
-                const dayKey = day.date.toISOString().split('T')[0];
-                const alreadyDiscounted = neighborhoodProblems.some(np => 
-                    np.date.toISOString().split('T')[0] === dayKey);
-                
-                if (!alreadyDiscounted) {
-                    totalDiscount += dailyDiscount;
-                    discountDetails.push({
-                        date: day.date,
-                        amount: dailyDiscount,
-                        type: 'Cidade Inteira',
-                        protocol: day.protocol
-                    });
-                }
-            });
-            
-            // Formata o resultado
-            let resultHTML = `
-                <h5>Desconto para: ${neighborhood}, ${city}</h5>
-                <p><strong>Total de descontos calculados:</strong> R$ ${totalDiscount.toFixed(2)}</p>
-                <p><strong>Dias com problemas:</strong> ${discountDetails.length}</p>
-            `;
-            
-            if (discountDetails.length > 0) {
-                resultHTML += `
-                    <table class="table table-sm mt-3">
-                        <thead>
-                            <tr>
-                                <th>Data</th>
-                                <th>Tipo</th>
-                                <th>Protocolo</th>
-                                <th>Valor (R$)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                `;
-                
-                discountDetails.sort((a, b) => a.date - b.date).forEach(detail => {
-                    resultHTML += `
-                        <tr>
-                            <td>${detail.date.toLocaleDateString('pt-BR')}</td>
-                            <td>${detail.type}</td>
-                            <td>${detail.protocol}</td>
-                            <td>${detail.amount.toFixed(2)}</td>
-                        </tr>
-                    `;
-                });
-                
-                resultHTML += `
-                        </tbody>
-                    </table>
-                `;
-            } else {
-                resultHTML += `<p>Nenhum dia com problemas encontrado para o período.</p>`;
-            }
-            
-            discountResult.innerHTML = resultHTML;
-            discountResult.style.display = 'block';
         }
     </script>
 </body>
