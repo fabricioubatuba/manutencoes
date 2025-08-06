@@ -4,67 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Controle de Manutenções - Seja Fibra</title>
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        body {
-            padding: 20px;
-            background-color: #f8f9fa;
-        }
-        .card {
-            margin-bottom: 20px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        .card-header {
-            background-color: #0d6efd;
-            color: white;
-            font-weight: bold;
-        }
-        .table-responsive {
-            margin-top: 20px;
-        }
-        .btn-action {
-            margin: 0 5px;
-        }
-        .form-section {
-            margin-bottom: 30px;
-        }
-        .status-badge {
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
-        .status-active {
-            background-color: #ffc107;
-            color: #000;
-        }
-        .status-completed {
-            background-color: #198754;
-            color: #fff;
-        }
-        #appContent {
-            display: none;
-        }
-        #loginForm {
-            max-width: 400px;
-            margin: 50px auto;
-        }
-        .logo {
-            max-height: 60px;
-            margin-bottom: 20px;
-        }
-        .user-info {
-            margin-left: 15px;
-            font-size: 0.9rem;
-            color: #6c757d;
-        }
+        body { padding: 20px; background-color: #f8f9fa; }
+        .card { margin-bottom: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .card-header { background-color: #0d6efd; color: white; font-weight: bold; }
+        .table-responsive { margin-top: 20px; }
+        .btn-action { margin: 0 5px; }
+        .form-section { margin-bottom: 30px; }
+        .status-badge { padding: 5px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; }
+        .status-active { background-color: #ffc107; color: #000; }
+        .status-completed { background-color: #198754; color: #fff; }
+        #appContent { display: none; }
+        #loginForm { max-width: 400px; margin: 50px auto; }
+        .logo { max-height: 60px; margin-bottom: 20px; }
+        .user-info { margin-left: 15px; font-size: 0.9rem; color: #6c757d; }
+        .form-check-label { user-select: none; }
+        .discount-result { background-color: #e9ecef; padding: 15px; border-radius: 5px; margin-top: 20px; }
     </style>
 </head>
 <body>
-    <!-- Tela de Login (visível inicialmente) -->
     <div id="loginSection" class="text-center">
         <div class="card">
             <div class="card-header">
@@ -90,7 +50,6 @@
         </div>
     </div>
 
-    <!-- Conteúdo do App (oculto inicialmente) -->
     <div id="appContent" class="container">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
@@ -104,7 +63,6 @@
             </button>
         </div>
         
-        <!-- Formulário de Cadastro -->
         <div class="card form-section">
             <div class="card-header">
                 <i class="fas fa-plus-circle"></i> Cadastrar Nova Manutenção
@@ -124,8 +82,9 @@
                         </div>
                         <div class="col-md-6">
                             <label for="neighborhood" class="form-label">Bairro</label>
-                            <select class="form-select" id="neighborhood" required disabled>
-                                <option value="">Selecione primeiro a cidade</option>
+                            <select class="form-select" id="neighborhood">
+                                <option value="">Selecione um bairro ou cidade inteira</option>
+                                <option value="TODA_CIDADE">Cidade Inteira</option>
                             </select>
                         </div>
                     </div>
@@ -169,18 +128,23 @@
             </div>
         </div>
         
-        <!-- Listagem de Manutenções -->
         <div class="card">
-            <div class="card-header">
-                <i class="fas fa-list"></i> Últimas Manutenções Cadastradas
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <i class="fas fa-list"></i> Últimas Manutenções Cadastradas
+                </div>
+                <button class="btn btn-sm btn-info" id="calculateDiscountsBtn">
+                    <i class="fas fa-calculator"></i> Calcular Descontos
+                </button>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-striped table-hover">
                         <thead>
                             <tr>
+                                <th>Protocolo</th>
                                 <th>Cidade</th>
-                                <th>Bairro</th>
+                                <th>Área Afetada</th>
                                 <th>Tipo</th>
                                 <th>Responsável</th>
                                 <th>Início</th>
@@ -191,25 +155,53 @@
                         </thead>
                         <tbody id="maintenanceTable">
                             <tr>
-                                <td colspan="8" class="text-center">Carregando dados...</td>
+                                <td colspan="9" class="text-center">Carregando dados...</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
+
+        <div class="card mt-4" id="discountResultsCard" style="display: none;">
+            <div class="card-header">
+                <i class="fas fa-percentage"></i> Resultado de Descontos
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="discountCity" class="form-label">Cidade</label>
+                        <select class="form-select" id="discountCity" required>
+                            <option value="">Selecione uma cidade</option>
+                            <option value="Ubatuba">Ubatuba</option>
+                            <option value="Caraguatatuba">Caraguatatuba</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="discountNeighborhood" class="form-label">Bairro</label>
+                        <select class="form-select" id="discountNeighborhood" required>
+                            <option value="">Selecione um bairro</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="discountDate" class="form-label">Data de Referência</label>
+                        <input type="date" class="form-control" id="discountDate" required>
+                    </div>
+                </div>
+                <button id="calculateForAddressBtn" class="btn btn-primary">
+                    <i class="fas fa-calculator"></i> Calcular para Este Endereço
+                </button>
+                <div id="discountResult" class="discount-result mt-3" style="display: none;"></div>
+            </div>
+        </div>
     </div>
 
-    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
-    
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
-        // Configuração do Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyC95aDwbm43uv7UPB7YDT5VjCe5USz2mZ8",
             authDomain: "descontos-4ab4b.firebaseapp.com",
@@ -220,16 +212,13 @@
             appId: "1:907559767912:web:d9974a77e46a5ef08ed0dd"
         };
 
-        // Inicializa o Firebase
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
         const auth = firebase.auth();
 
-        // Mapeamento de bairros por cidade
         const neighborhoods = {
             'Ubatuba': ['Acaraú', 'Barra da Lagoa', 'Barra-Seca', 'Caçandoca', 'Centro', 'Emaús', 'Enseada', 'Estufa 1', 'Estufa 2', 'Ipiranguinha', 'Itaguá', 'Itamambuca', 'Jardim Carolina', 'Lagoinha', 'Lázaro', 'Marafunda', 'Maranduba', 'Parque Dos Ministérios', 'Parque Guarani', 'Parque Vivamar', 'Pedra Verde', 'Pedreira', 'Perequê-Açú', 'Pereque-Mirim', 'Praia Do Pulso', 'Praia Dura', 'Praia Grande', 'Rio Escuro', 'Santa Rita', 'Sapé', 'Sertão Da Quina', 'Silop', 'Sumaré', 'Sumidouro', 'Taquaral', 'Taquaral (Angelim)', 'Taquaral (Vila Resende)', 'Tenório', 'Toninhas', 'Ubatuba', 'Umuarama', 'Vale Do Sol', 'Vila Sumaré'],
-            'Caraguatatuba': ['Alamedas dos Pessegueiros', 'Alamedas das Amendoeiras', 'Alamedas das Cerejeiras', 'Alamedas Das Figueiras', 'Alamedas Dos Castanheiros', 'Araguais', 'Barranco Alto', 'Caputera', 'Caraguá', 'Casa Branca', 'Centro', 'Cidade Jardim', 'Cond Res Vilaggio Portofino', 'Cond. Beira Mar (Martim De Sá)', 'Cond. Gaivotas', 'Costa Nova', 'Costa Verde', 'Getuba', 'Golfinhos', 'Ilhas Canárias', 'Jaraguazinho', 'Jardim Capricornio', 'Jardim Gaivotas', 'Jardim Primavera', 'Jardim Santa Rosa (Chocolate)', 'Jardim Terralão', 'Martim De Sá', 'Massaguaçu', 'Morro Do Algodão', 'Olaria', 'Parque Imperial', 'Pereque', 'Poiares', 'Ponte Seca', 'Portal Fazendinha', 'Portal Patrimonio', 'Praia Da Mococa', 'Prainha', 'Rio Do Ouro', 'Sumaré', 'Tabatinga', 'Terralão', 'Tocantins', 'Travessão', 'Loteamento Morada Do Mar', 'Indaiá', 'Jardim California', 'Jardim Jaqueira', 'Tinga']
-]
+            'Caraguatatuba': ['Alamedas dos Pessegueiros', 'Alamedas das Amendoeiras', 'Alamedas das Cerejeiras', 'Alamedas Das Figueiras', 'Alamedas Dos Castanheiros', 'Araguais', 'Barranco Alto', 'Caputera', 'Caraguá', 'Casa Branca', 'Centro', 'Cidade Jardim', 'Cond Res Vilaggio Portofino', 'Cond. Beira Mar (Martim De Sá)', 'Cond. Gaivotas', 'Costa Nova', 'Costa Verde', 'Getuba', 'Golfinhos', 'Golfinhos', 'Ilhas Canárias', 'Jaraguazinho', 'Jardim Capricornio', 'Jardim Gaivotas', 'Jardim Primavera', 'Jardim Santa Rosa (Chocolate)', 'Jardim Terralão', 'Martim De Sá', 'Massaguaçu', 'Morro Do Algodão', 'Olaria', 'Osvaldo Cruz', 'Parque Imperial', 'Pereque', 'Poiares', 'Ponte Seca', 'Portal Fazendinha', 'Portal Patrimonio', 'Praia Da Mococa', 'Prainha', 'Rio Do Ouro', 'Santos Dumont', 'Sumaré', 'Tabatinga', 'Terralão', 'Tocantins', 'Travessão', 'Loteamento Morada Do Mar', 'Indaiá', 'Jardim California', 'Jardim Jaqueira', 'Tinga']
         };
 
         // Referências do DOM
@@ -253,10 +242,18 @@
         const saveBtn = document.getElementById('saveBtn');
         const cancelBtn = document.getElementById('cancelBtn');
         const maintenanceIdInput = document.getElementById('maintenanceId');
+        const calculateDiscountsBtn = document.getElementById('calculateDiscountsBtn');
+        const discountResultsCard = document.getElementById('discountResultsCard');
+        const discountCity = document.getElementById('discountCity');
+        const discountNeighborhood = document.getElementById('discountNeighborhood');
+        const discountDate = document.getElementById('discountDate');
+        const calculateForAddressBtn = document.getElementById('calculateForAddressBtn');
+        const discountResult = document.getElementById('discountResult');
 
         // Estado da aplicação
         let editingId = null;
         let currentUser = null;
+        let allMaintenances = [];
 
         // Inicialização
         document.addEventListener('DOMContentLoaded', function() {
@@ -266,25 +263,34 @@
         });
 
         function setupEventListeners() {
-            // Atualiza bairros quando a cidade muda
             citySelect.addEventListener('change', function() {
                 updateNeighborhoods();
             });
 
-            // Form submission
+            discountCity.addEventListener('change', function() {
+                updateDiscountNeighborhoods();
+            });
+
             maintenanceForm.addEventListener('submit', function(e) {
                 e.preventDefault();
                 saveMaintenance();
             });
 
-            // Cancel button
             cancelBtn.addEventListener('click', function() {
                 cancelEdit();
+            });
+
+            calculateDiscountsBtn.addEventListener('click', function() {
+                discountResultsCard.style.display = 'block';
+                discountDate.valueAsDate = new Date();
+            });
+
+            calculateForAddressBtn.addEventListener('click', function() {
+                calculateDiscountForAddress();
             });
         }
 
         function setupAuth() {
-            // Verifica estado de autenticação
             auth.onAuthStateChanged(user => {
                 if (user) {
                     checkAuthorizedUser(user);
@@ -293,7 +299,6 @@
                 }
             });
 
-            // Login
             loginForm.addEventListener('submit', e => {
                 e.preventDefault();
                 const email = loginEmail.value;
@@ -309,7 +314,6 @@
                     });
             });
 
-            // Logout
             logoutBtn.addEventListener('click', () => {
                 auth.signOut();
             });
@@ -347,10 +351,18 @@
 
         function updateNeighborhoods() {
             const city = citySelect.value;
-            neighborhoodSelect.innerHTML = '<option value="">Selecione um bairro</option>';
+            neighborhoodSelect.innerHTML = '<option value="">Selecione um bairro ou cidade inteira</option>';
             
             if (city) {
                 neighborhoodSelect.disabled = false;
+                
+                // Adiciona opção "Cidade Inteira"
+                const cityOption = document.createElement('option');
+                cityOption.value = "TODA_CIDADE";
+                cityOption.textContent = city === "Ubatuba" ? "Ubatuba (Toda Cidade)" : "Caraguá (Toda Cidade)";
+                neighborhoodSelect.appendChild(cityOption);
+                
+                // Adiciona os bairros
                 neighborhoods[city].forEach(neighborhood => {
                     const option = document.createElement('option');
                     option.value = neighborhood;
@@ -362,12 +374,29 @@
             }
         }
 
+        function updateDiscountNeighborhoods() {
+            const city = discountCity.value;
+            discountNeighborhood.innerHTML = '<option value="">Selecione um bairro</option>';
+            
+            if (city) {
+                neighborhoods[city].forEach(neighborhood => {
+                    const option = document.createElement('option');
+                    option.value = neighborhood;
+                    option.textContent = neighborhood;
+                    discountNeighborhood.appendChild(option);
+                });
+            }
+        }
+
         function setCurrentDateTime() {
             const now = new Date();
-            // Ajusta para o fuso horário local e formata para o input datetime-local
             const timezoneOffset = now.getTimezoneOffset() * 60000;
             const localISOTime = new Date(now - timezoneOffset).toISOString().slice(0, 16);
             startDateInput.value = localISOTime;
+        }
+
+        function generateRandomProtocol() {
+            return Math.floor(1000000 + Math.random() * 9000000).toString();
         }
 
         function saveMaintenance() {
@@ -378,21 +407,30 @@
             const startDate = startDateInput.value;
             const endDate = endDateInput.value;
             const id = maintenanceIdInput.value || database.ref().child('maintenances').push().key;
+            const protocol = generateRandomProtocol();
 
             if (!city || !neighborhood || !problemType || !responsible || !startDate) {
                 alert('Preencha todos os campos obrigatórios!');
                 return;
             }
 
+            // Determina o texto para exibição da área afetada
+            const affectedArea = neighborhood === "TODA_CIDADE" ? 
+                (city === "Ubatuba" ? "Ubatuba (Toda Cidade)" : "Caraguá (Toda Cidade)") : 
+                neighborhood;
+
             const maintenanceData = {
                 city,
                 neighborhood,
+                affectedArea, // Campo adicional para exibição
                 problemType,
                 responsible,
                 startDate,
                 endDate,
+                protocol,
                 updatedAt: firebase.database.ServerValue.TIMESTAMP,
-                updatedBy: currentUser.email
+                updatedBy: currentUser.email,
+                isCityWide: neighborhood === "TODA_CIDADE" // Flag para manutenção em toda cidade
             };
 
             const updates = {};
@@ -410,40 +448,40 @@
         }
 
         function loadMaintenances() {
-            database.ref('maintenances').orderByChild('updatedAt').limitToLast(10).on('value', snapshot => {
+            database.ref('maintenances').orderByChild('updatedAt').limitToLast(50).on('value', snapshot => {
                 maintenanceTable.innerHTML = '';
+                allMaintenances = [];
                 
                 if (!snapshot.exists()) {
-                    maintenanceTable.innerHTML = '<tr><td colspan="8" class="text-center">Nenhuma manutenção cadastrada</td></tr>';
+                    maintenanceTable.innerHTML = '<tr><td colspan="9" class="text-center">Nenhuma manutenção cadastrada</td></tr>';
                     return;
                 }
 
-                // Converte para array e ordena por data (mais recente primeiro)
-                const maintenances = [];
                 snapshot.forEach(childSnapshot => {
-                    maintenances.push({
+                    const maintenance = {
                         id: childSnapshot.key,
                         ...childSnapshot.val()
-                    });
+                    };
+                    allMaintenances.push(maintenance);
                 });
 
-                maintenances.sort((a, b) => b.updatedAt - a.updatedAt);
+                // Ordena por data (mais recente primeiro)
+                allMaintenances.sort((a, b) => b.updatedAt - a.updatedAt);
 
-                maintenances.forEach(maintenance => {
+                allMaintenances.forEach(maintenance => {
                     const row = document.createElement('tr');
                     
-                    // Formata datas
                     const startDate = formatDateTime(maintenance.startDate);
                     const endDate = maintenance.endDate ? formatDateTime(maintenance.endDate) : '-';
                     
-                    // Determina status
                     const status = maintenance.endDate ? 
                         '<span class="status-badge status-completed">Concluído</span>' : 
                         '<span class="status-badge status-active">Em Andamento</span>';
 
                     row.innerHTML = `
+                        <td>${maintenance.protocol || 'N/A'}</td>
                         <td>${maintenance.city}</td>
-                        <td>${maintenance.neighborhood}</td>
+                        <td>${maintenance.affectedArea || maintenance.neighborhood}</td>
                         <td>${maintenance.problemType}</td>
                         <td>${maintenance.responsible}</td>
                         <td>${startDate}</td>
@@ -483,25 +521,22 @@
                     if (snapshot.exists()) {
                         const data = snapshot.val();
                         
-                        // Preenche o formulário
                         citySelect.value = data.city;
                         updateNeighborhoods();
+                        
                         setTimeout(() => {
                             neighborhoodSelect.value = data.neighborhood;
+                            problemTypeSelect.value = data.problemType;
+                            responsibleInput.value = data.responsible;
+                            startDateInput.value = data.startDate;
+                            endDateInput.value = data.endDate || '';
+                            maintenanceIdInput.value = id;
+                            
+                            saveBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Atualizar';
+                            cancelBtn.style.display = 'block';
+                            
+                            document.querySelector('.form-section').scrollIntoView({ behavior: 'smooth' });
                         }, 100);
-                        
-                        problemTypeSelect.value = data.problemType;
-                        responsibleInput.value = data.responsible;
-                        startDateInput.value = data.startDate;
-                        endDateInput.value = data.endDate || '';
-                        maintenanceIdInput.value = id;
-                        
-                        // Altera o botão para "Atualizar"
-                        saveBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Atualizar';
-                        cancelBtn.style.display = 'block';
-                        
-                        // Rola para o formulário
-                        document.querySelector('.form-section').scrollIntoView({ behavior: 'smooth' });
                     }
                 })
                 .catch(error => {
@@ -548,6 +583,152 @@
                 hour: '2-digit',
                 minute: '2-digit'
             });
+        }
+
+        function calculateDiscountForAddress() {
+            const city = discountCity.value;
+            const neighborhood = discountNeighborhood.value;
+            const referenceDate = discountDate.value;
+            
+            if (!city || !neighborhood || !referenceDate) {
+                alert('Preencha todos os campos para calcular o desconto!');
+                return;
+            }
+            
+            const refDate = new Date(referenceDate);
+            refDate.setHours(0, 0, 0, 0);
+            
+            // Filtra manutenções relevantes
+            const relevantMaintenances = allMaintenances.filter(maint => {
+                // Verifica se é para a mesma cidade
+                if (maint.city !== city) return false;
+                
+                // Verifica se a manutenção é para este bairro específico OU para toda a cidade
+                if (maint.neighborhood !== neighborhood && maint.neighborhood !== "TODA_CIDADE") return false;
+                
+                // Verifica se a manutenção está dentro do período de referência
+                const startDate = new Date(maint.startDate);
+                const endDate = maint.endDate ? new Date(maint.endDate) : new Date();
+                
+                startDate.setHours(0, 0, 0, 0);
+                endDate.setHours(0, 0, 0, 0);
+                
+                return startDate <= refDate && endDate >= refDate;
+            });
+            
+            // Ordena por data de início (mais antiga primeiro)
+            relevantMaintenances.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+            
+            // Agrupa por dia de problema
+            const daysWithProblems = {};
+            
+            relevantMaintenances.forEach(maint => {
+                const startDate = new Date(maint.startDate);
+                const endDate = maint.endDate ? new Date(maint.endDate) : new Date();
+                
+                // Para cada dia no intervalo da manutenção
+                for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+                    const dayKey = d.toISOString().split('T')[0];
+                    
+                    // Se já tiver um problema registrado para este dia, não sobrescreve (mantém o mais antigo)
+                    if (!daysWithProblems[dayKey]) {
+                        daysWithProblems[dayKey] = {
+                            date: new Date(d),
+                            isCityWide: maint.isCityWide,
+                            protocol: maint.protocol
+                        };
+                    }
+                }
+            });
+            
+            // Filtra apenas os dias que estão no mês/ano de referência
+            const refMonth = refDate.getMonth();
+            const refYear = refDate.getFullYear();
+            
+            const filteredDays = Object.values(daysWithProblems).filter(day => {
+                return day.date.getMonth() === refMonth && day.date.getFullYear() === refYear;
+            });
+            
+            // Separa problemas de bairro específico vs cidade inteira
+            const neighborhoodProblems = filteredDays.filter(day => !day.isCityWide);
+            const cityWideProblems = filteredDays.filter(day => day.isCityWide);
+            
+            // Calcula descontos
+            const dailyDiscount = 3.33; // Valor diário do desconto (R$)
+            
+            let totalDiscount = 0;
+            let discountDetails = [];
+            
+            // Primeiro aplica descontos de bairro específico
+            neighborhoodProblems.forEach(day => {
+                totalDiscount += dailyDiscount;
+                discountDetails.push({
+                    date: day.date,
+                    amount: dailyDiscount,
+                    type: 'Bairro',
+                    protocol: day.protocol
+                });
+            });
+            
+            // Depois aplica descontos de cidade inteira, exceto dias já cobertos por descontos de bairro
+            cityWideProblems.forEach(day => {
+                const dayKey = day.date.toISOString().split('T')[0];
+                const alreadyDiscounted = neighborhoodProblems.some(np => 
+                    np.date.toISOString().split('T')[0] === dayKey);
+                
+                if (!alreadyDiscounted) {
+                    totalDiscount += dailyDiscount;
+                    discountDetails.push({
+                        date: day.date,
+                        amount: dailyDiscount,
+                        type: 'Cidade Inteira',
+                        protocol: day.protocol
+                    });
+                }
+            });
+            
+            // Formata o resultado
+            let resultHTML = `
+                <h5>Desconto para: ${neighborhood}, ${city}</h5>
+                <p><strong>Total de descontos calculados:</strong> R$ ${totalDiscount.toFixed(2)}</p>
+                <p><strong>Dias com problemas:</strong> ${discountDetails.length}</p>
+            `;
+            
+            if (discountDetails.length > 0) {
+                resultHTML += `
+                    <table class="table table-sm mt-3">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Tipo</th>
+                                <th>Protocolo</th>
+                                <th>Valor (R$)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                discountDetails.sort((a, b) => a.date - b.date).forEach(detail => {
+                    resultHTML += `
+                        <tr>
+                            <td>${detail.date.toLocaleDateString('pt-BR')}</td>
+                            <td>${detail.type}</td>
+                            <td>${detail.protocol}</td>
+                            <td>${detail.amount.toFixed(2)}</td>
+                        </tr>
+                    `;
+                });
+                
+                resultHTML += `
+                        </tbody>
+                    </table>
+                `;
+            } else {
+                resultHTML += `<p>Nenhum dia com problemas encontrado para o período.</p>`;
+            }
+            
+            discountResult.innerHTML = resultHTML;
+            discountResult.style.display = 'block';
         }
     </script>
 </body>
