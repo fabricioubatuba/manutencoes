@@ -448,72 +448,73 @@
         }
 
         function loadMaintenances() {
-            database.ref('maintenances').orderByChild('updatedAt').limitToLast(50).on('value', snapshot => {
-                maintenanceTable.innerHTML = '';
-                allMaintenances = [];
-                
-                if (!snapshot.exists()) {
-                    maintenanceTable.innerHTML = '<tr><td colspan="9" class="text-center">Nenhuma manutenção cadastrada</td></tr>';
-                    return;
-                }
-
-                snapshot.forEach(childSnapshot => {
-                    const maintenance = {
-                        id: childSnapshot.key,
-                        ...childSnapshot.val()
-                    };
-                    allMaintenances.push(maintenance);
-                });
-
-                // Ordena por data (mais recente primeiro)
-                allMaintenances.sort((a, b) => b.updatedAt - a.updatedAt);
-
-                allMaintenances.forEach(maintenance => {
-                    const row = document.createElement('tr');
-                    
-                    const startDate = formatDateTime(maintenance.startDate);
-                    const endDate = maintenance.endDate ? formatDateTime(maintenance.endDate) : '-';
-                    
-                    const status = maintenance.endDate ? 
-                        '<span class="status-badge status-completed">Concluído</span>' : 
-                        '<span class="status-badge status-active">Em Andamento</span>';
-
-                    row.innerHTML = `
-                        <td>${maintenance.protocol || 'N/A'}</td>
-                        <td>${maintenance.city}</td>
-                        <td>${maintenance.affectedArea || maintenance.neighborhood}</td>
-                        <td>${maintenance.problemType}</td>
-                        <td>${maintenance.responsible}</td>
-                        <td>${startDate}</td>
-                        <td>${endDate}</td>
-                        <td>${status}</td>
-                        <td>
-                            <button class="btn btn-sm btn-warning btn-action edit-btn" data-id="${maintenance.id}">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="btn btn-sm btn-danger btn-action delete-btn" data-id="${maintenance.id}">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </td>
-                    `;
-                    
-                    maintenanceTable.appendChild(row);
-                });
-
-                // Adiciona eventos aos botões
-                document.querySelectorAll('.edit-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        editMaintenance(this.getAttribute('data-id'));
-                    });
-                });
-
-                document.querySelectorAll('.delete-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        deleteMaintenance(this.getAttribute('data-id'));
-                    });
-                });
-            });
+    // MODIFICADO: Ordena por startDate e limita a 20 registros
+    database.ref('maintenances').orderByChild('startDate').limitToLast(20).on('value', snapshot => {
+        maintenanceTable.innerHTML = '';
+        allMaintenances = [];
+        
+        if (!snapshot.exists()) {
+            maintenanceTable.innerHTML = '<tr><td colspan="9" class="text-center">Nenhuma manutenção cadastrada</td></tr>';
+            return;
         }
+
+        snapshot.forEach(childSnapshot => {
+            const maintenance = {
+                id: childSnapshot.key,
+                ...childSnapshot.val()
+            };
+            allMaintenances.push(maintenance);
+        });
+
+        // MODIFICADO: Ordena por data de abertura (mais recente primeiro)
+        allMaintenances.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
+
+        allMaintenances.forEach(maintenance => {
+            const row = document.createElement('tr');
+            
+            const startDate = formatDateTime(maintenance.startDate);
+            const endDate = maintenance.endDate ? formatDateTime(maintenance.endDate) : '-';
+            
+            const status = maintenance.endDate ? 
+                '<span class="status-badge status-completed">Concluído</span>' : 
+                '<span class="status-badge status-active">Em Andamento</span>';
+
+            row.innerHTML = `
+                <td>${maintenance.protocol || 'N/A'}</td>
+                <td>${maintenance.city}</td>
+                <td>${maintenance.affectedArea || maintenance.neighborhood}</td>
+                <td>${maintenance.problemType}</td>
+                <td>${maintenance.responsible}</td>
+                <td>${startDate}</td>
+                <td>${endDate}</td>
+                <td>${status}</td>
+                <td>
+                    <button class="btn btn-sm btn-warning btn-action edit-btn" data-id="${maintenance.id}">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger btn-action delete-btn" data-id="${maintenance.id}">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            `;
+            
+            maintenanceTable.appendChild(row);
+        });
+
+        // Adiciona eventos aos botões (mantido igual)
+        document.querySelectorAll('.edit-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                editMaintenance(this.getAttribute('data-id'));
+            });
+        });
+
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                deleteMaintenance(this.getAttribute('data-id'));
+            });
+        });
+    });
+}
 
         function editMaintenance(id) {
             database.ref('maintenances/' + id).once('value')
