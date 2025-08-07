@@ -389,7 +389,7 @@ const maintenanceData = {
         }
 
         function loadMaintenances() {
-            database.ref('maintenances').orderByChild('startDate').limitToLast(20).on('value', snapshot => {
+            database.ref('maintenances').orderByChild('startDate').limitToLast(30).on('value', snapshot => {
                 maintenanceTable.innerHTML = '';
                 allMaintenances = [];
                 
