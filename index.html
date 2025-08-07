@@ -351,23 +351,28 @@
             }
 
             // Determina o texto para exibição da área afetada
-            const affectedArea = neighborhood === "TODA_CIDADE" ? 
-                (city === "Ubatuba" ? "Ubatuba (Toda Cidade)" : "Caraguá (Toda Cidade)") : 
-                neighborhood;
+const affectedArea = neighborhood === "TODA_CIDADE" ? 
+    (city === "Ubatuba" ? "Ubatuba (Toda Cidade)" : "Caraguá (Toda Cidade)") : 
+    neighborhood;
 
-            const maintenanceData = {
-                city,
-                neighborhood,
-                affectedArea,
-                problemType,
-                responsible,
-                startDate,
-                endDate,
-                protocol,
-                updatedAt: firebase.database.ServerValue.TIMESTAMP,
-                updatedBy: currentUser.email,
-                isCityWide: neighborhood === "TODA_CIDADE"
-            };
+// Modificação: Cria o valor formatado para o neighborhood
+const formattedNeighborhood = neighborhood === "TODA_CIDADE" ? 
+    (city === "Ubatuba" ? "Ubatuba (Toda Cidade)" : "Caraguá (Toda Cidade)") : 
+    neighborhood;
+
+const maintenanceData = {
+    city,
+    neighborhood: formattedNeighborhood, // Usa o valor formatado aqui
+    affectedArea,
+    problemType,
+    responsible,
+    startDate,
+    endDate,
+    protocol,
+    updatedAt: firebase.database.ServerValue.TIMESTAMP,
+    updatedBy: currentUser.email,
+    isCityWide: neighborhood === "TODA_CIDADE"
+};
 
             const updates = {};
             updates['/maintenances/' + id] = maintenanceData;
